@@ -40,14 +40,66 @@ add_action( 'wp_ajax_my_action', 'my_action' );
 function my_action() {
 	global $wpdb;
 
+    // how about wp nonces for ajax calls?
     // need to sanitize the user input properly 
 	echo json_encode(['email'=>'paul@foob.com']);
 	wp_die();
 }
 
-//     if ( !wp_verify_nonce( $_POST['nonce'], "ajaxloadpost_nonce")) {
-//         exit("Wrong nonce");
-//     }
+// init ? should this be in the activate code?
+new_cpt_notify_me();
+
+// warning need to check if this data is/can/could end up in the frontend - how can we be sure?
+function new_cpt_notify_me() {
+    $cap_type = 'post';
+    $plural = 'Back Order Notify';
+    $single = 'Notify request';
+    $cpt_name = 'wp-notify-stock';
+    $opts['can_export'] = TRUE;
+    $opts['capability_type'] = $cap_type;
+    $opts['description'] = '';
+    $opts['exclude_from_search'] = TRUE;
+    $opts['has_archive'] = FALSE;
+    $opts['hierarchical'] = FALSE;
+    $opts['map_meta_cap'] = TRUE;
+    $opts['menu_icon'] = 'dashicons-businessman';
+    $opts['menu_position'] = 25;
+    $opts['public'] = TRUE;
+    $opts['publicly_querable'] = false;
+    $opts['query_var'] = TRUE;
+    $opts['register_meta_box_cb'] = '';
+    $opts['rewrite'] = FALSE;
+    $opts['show_in_admin_bar'] = TRUE;
+    $opts['show_in_menu'] = TRUE;
+    $opts['show_in_nav_menu'] = TRUE;
+    
+    $opts['labels']['add_new'] = esc_html__( "Add New {$single}", 'wisdom' );
+    $opts['labels']['add_new_item'] = esc_html__( "Add New {$single}", 'wisdom' );
+    $opts['labels']['all_items'] = esc_html__( $plural, 'wisdom' );
+    $opts['labels']['edit_item'] = esc_html__( "Edit {$single}" , 'wisdom' );
+    $opts['labels']['menu_name'] = esc_html__( $plural, 'wisdom' );
+    $opts['labels']['name'] = esc_html__( $plural, 'wisdom' );
+    $opts['labels']['name_admin_bar'] = esc_html__( $single, 'wisdom' );
+    $opts['labels']['new_item'] = esc_html__( "New {$single}", 'wisdom' );
+    $opts['labels']['not_found'] = esc_html__( "No {$plural} Found", 'wisdom' );
+    $opts['labels']['not_found_in_trash'] = esc_html__( "No {$plural} Found in Trash", 'wisdom' );
+    $opts['labels']['parent_item_colon'] = esc_html__( "Parent {$plural} :", 'wisdom' );
+    $opts['labels']['search_items'] = esc_html__( "Search {$plural}", 'wisdom' );
+    $opts['labels']['singular_name'] = esc_html__( $single, 'wisdom' );
+    $opts['labels']['view_item'] = esc_html__( "View {$single}", 'wisdom' );
+
+    $opts['supports'] = array( 
+        'title', 
+        'editor', 
+        'excerpt', 
+        'thumbnail', 
+        'custom-fields', 
+        'revisions' 
+    );
+
+    register_post_type( strtolower( $cpt_name ), $opts );
+
+}
 
 
 ?>
