@@ -39,7 +39,9 @@ add_action('wp_enqueue_scripts', 'wp_notify_stock_scripts');
 add_action( 'wp_ajax_my_action', 'my_action' );
 function my_action() {
 	global $wpdb;
-	echo 10;
+
+    // need to sanitize the user input properly 
+	echo json_encode(['email'=>'paul@foob.com']);
 	wp_die();
 }
 
