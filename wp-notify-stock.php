@@ -33,6 +33,14 @@ function wp_notify_stock_scripts()
 
 add_action('wp_enqueue_scripts', 'wp_notify_stock_scripts');
 
+
+add_action( 'wp_ajax_my_action', 'my_action' );
+function my_action() {
+	global $wpdb;
+	echo 10;
+	wp_die();
+}
+
 // function ajaxloadpost_ajaxhandler() {
 
 //     if ( !wp_verify_nonce( $_POST['nonce'], "ajaxloadpost_nonce")) {
