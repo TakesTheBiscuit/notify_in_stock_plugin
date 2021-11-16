@@ -24,10 +24,10 @@ add_filter('woocommerce_get_availability_text', 'change_backorder_message', 10, 
 
 function wp_notify_stock_scripts()
 {
-    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '2.0.0', false);
+    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.1.0', false);
 
     wp_localize_script('wp_notify_stock', 'ajax_object',
-        array('ajax_url' => admin_url('admin-ajax.php'), 'we_value' => 1234));
+        array('ajax_url' => admin_url('admin-ajax.php')));
 
     wp_enqueue_style('wp_notify_stock_styles', plugin_dir_url(__FILE__) . 'css/wp-notify-stock.css');
 }
@@ -38,7 +38,7 @@ add_action('wp_ajax_wp_notify_stock_alert', 'wp_notify_stock_alert');
 function wp_notify_stock_alert()
 {
     global $wpdb;
-
+    // called by XHR/Ajax
     // must S A N I T I Z E
 
     $product_id = sanitize_text_field($_POST['product']);
@@ -78,11 +78,9 @@ function email_site_owner($notification_body) {
 }
 
 
-// init ? should this be in the activate code?
-new_cpt_notify_me();
+wp_notify_stock_cpt();
 
-// warning need to check if this data is/can/could end up in the frontend - how can we be sure?
-function new_cpt_notify_me()
+function wp_notify_stock_cpt()
 {
     $cap_type = 'post';
     $plural = 'Back Order Notify';
@@ -92,9 +90,6 @@ function new_cpt_notify_me()
     $opts['capability_type'] = $cap_type;
     $opts['description'] = '';
 
-    // when searching the front end site you cannot see these posts
-    // but are they properly hidden, e.g if someone registers as a guest?
-    // how about in xml site reader feeds ?
     $opts['exclude_from_search'] = true;
     $opts['has_archive'] = false;
     $opts['hierarchical'] = false;
@@ -146,7 +141,8 @@ function woocom_admins_only()
 {
     
     $screen = get_current_screen();
-
+    // this could be better but does prevent non `manage_woocommerce` users
+    // from seing anything related to this CPT in the backend interface
     if ($screen->post_type == "wp-notify-stock") {
         if (!current_user_can('manage_woocommerce')) {
             wp_redirect(home_url(), 301);

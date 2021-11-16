@@ -1,6 +1,5 @@
 jQuery(document).ready(function () {
     jQuery('#wp-notify-me').on('click', function () {
-        // spawn a modal into the page
         if (jQuery('#wp-notify-stock').length) {
 
         } else {
@@ -15,7 +14,7 @@ jQuery(document).ready(function () {
             jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="wpStockNotifyClose()">back order</a> this item by clicking "Add to cart"</span>');
 
             jQuery('#wp-notify-stock').slideDown('fast');
-            // register the handler for form submission
+
             notifyStockFormHandler();
         }
 
@@ -34,16 +33,12 @@ function wpStockNotifyClose() {
 function notifyStockFormHandler() {
     jQuery('#wp-notify-stock form').on('submit', function (e) {
         e.preventDefault();
-
-        // save or submit email and product ID to backend
         var data = {
             'action': 'wp_notify_stock_alert',
             'product': jQuery('#wp-notify-stock-product-id').val(),
             'email': jQuery('#wp-notify-stock form input[name=email]').val()
         };
-        // We can also pass the url value separately from ajaxurl for front end AJAX implementations
         jQuery.post(ajax_object.ajax_url, data, function (response) {
-            console.log('Got this from the server: ' + response);
             response = JSON.parse(response);
             jQuery('#wp-notify-stock').empty();
 
@@ -55,9 +50,6 @@ function notifyStockFormHandler() {
             jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-close" onclick="wpStockNotifyClose()">Close</button>');
             jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-add-cart" onclick="triggerAddToCart()">Back order</button><div class="wp-notify-stock-clear-floats"></div>'); 
 
-
-
-
         });
 
     });
@@ -65,5 +57,4 @@ function notifyStockFormHandler() {
 
 function triggerAddToCart() {
     jQuery('body').find('form.cart button').click();
-    console.log('adding to cart via clicking button');
 }
