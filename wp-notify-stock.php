@@ -69,7 +69,7 @@ function new_cpt_notify_me() {
     $opts['show_in_admin_bar'] = TRUE;
     $opts['show_in_menu'] = TRUE;
     $opts['show_in_nav_menu'] = TRUE;
-    $opts['public'] = TRUE;
+    $opts['public'] = false;
     $opts['publicly_querable'] = false;
 
     $opts['menu_icon'] = 'dashicons-businessman';
