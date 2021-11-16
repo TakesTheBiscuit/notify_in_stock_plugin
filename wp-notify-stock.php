@@ -24,7 +24,7 @@ add_filter('woocommerce_get_availability_text', 'change_backorder_message', 10, 
 
 function wp_notify_stock_scripts()
 {
-    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.0.0', false);
+    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '2.0.0', false);
 
     wp_localize_script('wp_notify_stock', 'ajax_object',
         array('ajax_url' => admin_url('admin-ajax.php'), 'we_value' => 1234));
@@ -34,16 +34,49 @@ function wp_notify_stock_scripts()
 
 add_action('wp_enqueue_scripts', 'wp_notify_stock_scripts');
 
-add_action('wp_ajax_my_action', 'my_action');
-function my_action()
+add_action('wp_ajax_wp_notify_stock_alert', 'wp_notify_stock_alert');
+function wp_notify_stock_alert()
 {
     global $wpdb;
 
-    // how about wp nonces for ajax calls?
-    // need to sanitize the user input properly
-    echo json_encode(['email' => 'paul@foob.com']);
+    // must S A N I T I Z E
+
+    $product_id = sanitize_text_field($_POST['product']);
+    $customer_email = sanitize_text_field($_POST['email']);
+
+    $product = wc_get_product( $product_id );
+    $sku = $product->get_sku();
+    $product_name = $product->get_title();
+
+    $notification_body = "Notify when in stock\n\n" . $product_name ."\nCustomer email: ". $customer_email."\nView product at: /wp-admin/post.php?post=".$product_id."&action=edit"."\nSKU: ".$sku;
+
+    $id = wp_insert_post(array(
+        'post_title'=> $customer_email.' - '.$product_name, 
+        'post_type'=>'wp-notify-stock', 
+        'post_status'=>'private',
+        'post_content'=> $notification_body
+    ));
+
+    echo json_encode(['email' => $customer_email]);
+
+    if ($id) {
+        email_site_owner($notification_body);
+    }
+
     wp_die();
 }
+
+function email_site_owner($notification_body) {
+    $blog_info = get_bloginfo();
+    
+    $to_addr = $blog_info->admin_email;
+    $subject = $blog_info->name." - Backorder notification";
+
+    wp_mail($to_addr, $subject, $notification_body);
+
+    return true;
+}
+
 
 // init ? should this be in the activate code?
 new_cpt_notify_me();
