@@ -1,5 +1,4 @@
 #wp-notify-stock {
-   
     background:white;
     height: 350px;
     width: 320px;
@@ -14,9 +13,7 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    /* bring your own prefixes */
     transform: translate(-50%, -50%);
-
 }
 #wp-notify-stock h3{
     padding-top:10px;
@@ -28,15 +25,24 @@
 }
 #wp-notify-stock button {
     margin: 20px 0;
-    float:right;
     background: #00fff6;
     color: #43494e;
 }
-
+#wp-notify-stock-notify-me {
+    float:right;
+}
 #wp-notify-stock input {
    width: 100%;
 }
-
+#wp-notify-stock-close {
+    float: left;
+}
+#wp-notify-stock-add-cart {
+    float:right;
+}
+.wp-notify-stock-clear-floats {
+    clear:both;
+}
 a.wp-notify-stock-close-small {
     border-radius:100%;
     background: #ebeaea;
@@ -55,5 +61,4 @@ a.wp-notify-stock-close-small:hover {
     background: #000;
     color: #fff;
     cursor: pointer;
-
 }
