@@ -14,7 +14,8 @@ function change_backorder_message($text, $product)
 {
 
     if ($product->managing_stock() && $product->is_on_backorder(1)) {
-        $text = __('<a href="#notifyme" id="wp-notify-me" data-product-id="' . $product->id . '" class="single_add_to_cart_button button alt">Notify me when it is in stock</a>', 'your-textdomain');
+        $text = 'OUT OF STOCK - More is on the way - you can back order this item.<br>';
+        $text .= __('<a href="#notifyme" id="wp-notify-me" data-product-id="' . $product->id . '" class="single_add_to_cart_button button alt">Notify me when it is in stock</a>', 'your-textdomain');
     }
 
     return $text;
