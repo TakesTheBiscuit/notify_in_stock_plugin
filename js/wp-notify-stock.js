@@ -10,7 +10,7 @@ jQuery(document).ready(function(){
             jQuery('#wp-notify-stock').append('<h3>Notify me when in stock</h3>');
             jQuery('#wp-notify-stock').append('<p>Enter your email address and we will let you know when it is back in stock.</p>');
             jQuery('#wp-notify-stock').append('<form>Email:<br><input type="email" name="email"/><br><button type="submit">Notify me</button>');
-            jQuery('#wp-notify-stock').append('<input type="hidden" name="wp-notify-stock-product-id" value="' + jQuery(this).attr('data-product-id') + '"');
+            jQuery('#wp-notify-stock').append('<input type="hidden" id="wp-notify-stock-product-id" value="' + jQuery(this).attr('data-product-id') + '">');
             jQuery('#wp-notify-stock').append('</form>');
             jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="wpStockNotifyClose()">back order</a> this item by clicking "Add to cart"</span>');
 
@@ -36,10 +36,10 @@ function notifyStockFormHandler() {
         e.preventDefault();
 
         // save or submit email and product ID to backend
-
         var data = {
-            'action': 'my_action',
-            'whatever': ajax_object.we_value      // We pass php values differently!
+            'action': 'wp_notify_stock_alert',
+            'product': jQuery('#wp-notify-stock-product-id').val(),
+            'email': jQuery('#wp-notify-stock form input[name=email]').val()
         };
         // We can also pass the url value separately from ajaxurl for front end AJAX implementations
         jQuery.post(ajax_object.ajax_url, data, function(response) {
