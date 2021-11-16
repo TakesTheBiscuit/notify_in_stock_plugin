@@ -28,15 +28,24 @@
 }
 #wp-notify-stock button {
     margin: 20px 0;
-    float:right;
     background: #00fff6;
     color: #43494e;
 }
-
+#wp-notify-stock-notify-me {
+    float:right;
+}
 #wp-notify-stock input {
    width: 100%;
 }
-
+#wp-notify-stock-close {
+    float: left;
+}
+#wp-notify-stock-add-cart {
+    float:right;
+}
+.wp-notify-stock-clear-floats {
+    clear:both;
+}
 a.wp-notify-stock-close-small {
     border-radius:100%;
     background: #ebeaea;
