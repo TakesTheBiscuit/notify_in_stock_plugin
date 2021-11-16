@@ -58,20 +58,27 @@ function new_cpt_notify_me() {
     $opts['can_export'] = TRUE;
     $opts['capability_type'] = $cap_type;
     $opts['description'] = '';
+
+    // when searching the front end site you cannot see these posts
+    // but are they properly hidden, e.g if someone registers as a guest?
+    // how about in xml site reader feeds ? 
     $opts['exclude_from_search'] = TRUE;
     $opts['has_archive'] = FALSE;
     $opts['hierarchical'] = FALSE;
     $opts['map_meta_cap'] = TRUE;
-    $opts['menu_icon'] = 'dashicons-businessman';
-    $opts['menu_position'] = 25;
-    $opts['public'] = TRUE;
-    $opts['publicly_querable'] = false;
-    $opts['query_var'] = TRUE;
-    $opts['register_meta_box_cb'] = '';
-    $opts['rewrite'] = FALSE;
     $opts['show_in_admin_bar'] = TRUE;
     $opts['show_in_menu'] = TRUE;
     $opts['show_in_nav_menu'] = TRUE;
+    $opts['public'] = TRUE;
+    $opts['publicly_querable'] = false;
+
+    $opts['menu_icon'] = 'dashicons-businessman';
+    $opts['menu_position'] = 25;
+
+    $opts['query_var'] = TRUE;
+    $opts['register_meta_box_cb'] = '';
+    $opts['rewrite'] = FALSE;
+
     
     $opts['labels']['add_new'] = esc_html__( "Add New {$single}", 'wisdom' );
     $opts['labels']['add_new_item'] = esc_html__( "Add New {$single}", 'wisdom' );
