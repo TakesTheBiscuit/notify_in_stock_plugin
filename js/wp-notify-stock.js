@@ -1,36 +1,41 @@
 jQuery(document).ready(function () {
+    init_wp_notify_stock('doco ready');
+});
+
+
+jQuery(window).on('found_variation',
+    function (event, variation) {
+        // console.log('variations_form', variation.variation_id);
+        init_wp_notify_stock('found_variation');
+    }
+);
+
+function init_wp_notify_stock(evSource) {
+    // console.log('init_wp_notify_stock running, source, ', evSource);
     jQuery('#wp-notify-me').on('click', function () {
         if (jQuery('#wp-notify-stock').length) {
 
         } else {
-            jQuery('body').append('<div style="display:none" id="wp-notify-stock"></div>');
-
-            jQuery('#wp-notify-stock').append('<a class="wp-notify-stock-close-small" onclick="wpStockNotifyClose()">X</a>');
-            jQuery('#wp-notify-stock').append('<h3>Notify me when in stock</h3>');
-            jQuery('#wp-notify-stock').append('<p>Enter your email address and we will let you know when it is back in stock.</p>');
-            jQuery('#wp-notify-stock').append('<form>Email:<br><input type="email" name="email"/><br><button type="submit" id="wp-notify-stock-notify-me" >Notify me</button>');
-            jQuery('#wp-notify-stock').append('<input type="hidden" id="wp-notify-stock-product-id" value="' + jQuery(this).attr('data-product-id') + '">');
-            jQuery('#wp-notify-stock').append('</form>');
-            jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="wpStockNotifyClose()">back order</a> this item by clicking "Add to cart"</span>');
-
-            jQuery('#wp-notify-stock').slideDown('fast');
-
-            notifyStockFormHandler();
+            var pID = jQuery(this).attr('data-product-id');
+            show_wp_notify_stock(pID);
         }
-
     });
-});
-
-function wpStockNotifyClose() {
-
-    jQuery('#wp-notify-stock').fadeOut('fast');
-    setTimeout(function () {
-        jQuery('#wp-notify-stock').remove();
-    }, 550);
-
 }
 
-function notifyStockFormHandler() {
+function show_wp_notify_stock(productID) {
+
+    jQuery('body').append('<div style="display:none" id="wp-notify-stock"></div>');
+
+    jQuery('#wp-notify-stock').append('<a class="wp-notify-stock-close-small" onclick="wpStockNotifyClose()">X</a>');
+    jQuery('#wp-notify-stock').append('<h3>Notify me when in stock</h3>');
+    jQuery('#wp-notify-stock').append('<p>Enter your email address and we will let you know when it is back in stock.</p>');
+    jQuery('#wp-notify-stock').append('<form>Email:<br><input type="email" name="email"/><br><button type="submit" id="wp-notify-stock-notify-me" >Notify me</button>');
+    jQuery('#wp-notify-stock').append('<input type="hidden" id="wp-notify-stock-product-id" value="' + productID + '">');
+    jQuery('#wp-notify-stock').append('</form>');
+    jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="wpStockNotifyClose()">back order</a> this item by clicking "Add to cart"</span>');
+
+    jQuery('#wp-notify-stock').slideDown('fast');
+
     jQuery('#wp-notify-stock form').on('submit', function (e) {
         e.preventDefault();
         var data = {
@@ -48,11 +53,19 @@ function notifyStockFormHandler() {
             jQuery('#wp-notify-stock').append("<p>If other customers backorder this item then you could miss out. Back order?</p>");
 
             jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-close" onclick="wpStockNotifyClose()">Close</button>');
-            jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-add-cart" onclick="triggerAddToCart()">Back order</button><div class="wp-notify-stock-clear-floats"></div>'); 
+            jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-add-cart" onclick="triggerAddToCart()">Back order</button><div class="wp-notify-stock-clear-floats"></div>');
 
         });
-
     });
+}
+
+function wpStockNotifyClose() {
+    jQuery('#wp-notify-stock').fadeOut('fast');
+
+    setTimeout(function () {
+        // tidy up dom incase it gets fired a second time
+        jQuery('#wp-notify-stock').remove();
+    }, 550);
 }
 
 function triggerAddToCart() {
