@@ -11,20 +11,20 @@ jQuery(window).on('found_variation',
 );
 
 function init_wp_notify_stock(evSource) {
-    // console.log('init_wp_notify_stock running, source, ', evSource);
+    console.log('init_wp_notify_stock running, source, ', evSource);
     jQuery('#wp-notify-me').on('click', function () {
         if (jQuery('#wp-notify-stock').length) {
 
         } else {
             var pID = jQuery(this).attr('data-product-id');
-            show_wp_notify_stock(pID);
+            show_wp_notify_stock(pID, jQuery(this).parent().parent());
         }
     });
 }
 
-function show_wp_notify_stock(productID) {
+function show_wp_notify_stock(productID, domElAppendTo) {
 
-    jQuery('body').append('<div style="display:none" id="wp-notify-stock"></div>');
+    domElAppendTo.append('<div style="display:none" id="wp-notify-stock"></div>');
 
     jQuery('#wp-notify-stock').append('<a class="wp-notify-stock-close-small" onclick="wpStockNotifyClose()">X</a>');
     jQuery('#wp-notify-stock').append('<h3>Notify me when in stock</h3>');
@@ -32,7 +32,7 @@ function show_wp_notify_stock(productID) {
     jQuery('#wp-notify-stock').append('<form>Email:<br><input type="email" name="email"/><br><button type="submit" id="wp-notify-stock-notify-me" >Notify me</button>');
     jQuery('#wp-notify-stock').append('<input type="hidden" id="wp-notify-stock-product-id" value="' + productID + '">');
     jQuery('#wp-notify-stock').append('</form>');
-    jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="wpStockNotifyClose()">back order</a> this item by clicking "Add to cart"</span>');
+    jQuery('#wp-notify-stock').append('<span>Alternatively you can <a href="#close" onclick="triggerAddToCart()">back order</a> this item by clicking "Add to cart"</span>');
 
     jQuery('#wp-notify-stock').slideDown('fast');
 

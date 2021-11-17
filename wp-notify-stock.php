@@ -25,7 +25,7 @@ add_filter('woocommerce_get_availability_text', 'change_backorder_message', 10, 
 
 function wp_notify_stock_scripts()
 {
-    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.1.0', false);
+    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.2.0', false);
 
     wp_localize_script('wp_notify_stock', 'ajax_object',
         array('ajax_url' => admin_url('admin-ajax.php')));
@@ -36,6 +36,8 @@ function wp_notify_stock_scripts()
 add_action('wp_enqueue_scripts', 'wp_notify_stock_scripts');
 
 add_action('wp_ajax_wp_notify_stock_alert', 'wp_notify_stock_alert');
+add_action( 'wp_ajax_nopriv_wp_notify_stock_alert', 'wp_notify_stock_alert' );
+
 function wp_notify_stock_alert()
 {
     global $wpdb;
