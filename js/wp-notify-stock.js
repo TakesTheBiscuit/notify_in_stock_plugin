@@ -1,7 +1,15 @@
 jQuery(document).ready(function () {
     init_wp_notify_stock('doco ready');
-});
 
+    jQuery('a.quick-view').on('click', function(){
+
+        waitForElement(".mfp-ready",function(){
+            // console.log("> QUICK VIEW WAS LOADED");
+            init_wp_notify_stock('quickview');
+        });
+
+    });
+});
 
 jQuery(window).on('found_variation',
     function (event, variation) {
@@ -71,3 +79,13 @@ function wpStockNotifyClose() {
 function triggerAddToCart() {
     jQuery('body').find('form.cart button').click();
 }
+
+function waitForElement(elementPath, callBack){
+    window.setTimeout(function(){
+      if (jQuery(elementPath).length){
+        callBack(elementPath, jQuery(elementPath));
+      } else {
+        waitForElement(elementPath, callBack);
+      }
+    },500)
+  }
