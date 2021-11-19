@@ -15,6 +15,9 @@
     left: 50%!important;
     transform: translate(-50%, -50%)!important;
 }
+#wp-notify-me {
+    font-size: 0.75rem!important;
+}
 #wp-notify-complete {
     display:none;
     color:#cf7a2f;
