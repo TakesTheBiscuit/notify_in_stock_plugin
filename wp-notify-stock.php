@@ -3,7 +3,7 @@
 Plugin Name: WP Notify Stock
 Plugin URI:  http://pauldrage.co.uk
 Description: This plugin allows woocommerce customers to request to be notified when a product is back in stock
-Version:     1.3.1
+Version:     1.3.2
 Author:      Paul Drage
 Author URI:  http://pauldrage.co.uk
 License:     GPL2 etc
