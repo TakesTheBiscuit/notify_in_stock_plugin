@@ -15,6 +15,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+#wp-notify-complete {
+    display:none;
+    color:#cf7a2f;
+}
 #wp-notify-stock h3{
     padding-top:10px;
 }

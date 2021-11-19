@@ -3,7 +3,7 @@
 Plugin Name: WP Notify Stock
 Plugin URI:  http://pauldrage.co.uk
 Description: This plugin allows woocommerce customers to request to be notified when a product is back in stock
-Version:     1.2.1
+Version:     1.3.0
 Author:      Paul Drage
 Author URI:  http://pauldrage.co.uk
 License:     GPL2 etc
@@ -15,7 +15,7 @@ function change_backorder_message($text, $product)
 
     if ($product->managing_stock() && $product->is_on_backorder(1)) {
         $text = 'OUT OF STOCK - More is on the way - you can back order this item.<br>';
-        $text .= __('<a href="#notifyme" id="wp-notify-me" data-product-id="' . $product->id . '" class="single_add_to_cart_button button alt">Notify me when it is in stock</a>', 'your-textdomain');
+        $text .= __('<div id="wp-notify-complete" style="display:none;"><em>We will notify you when in stock. You should back order it if you want to secure the item for yourself. Press "Add to basket".</em></div><a href="#notifyme" style="display:none;" id="wp-notify-me" data-product-id="' . $product->id . '" class="single_add_to_cart_button button alt">Notify me when it is in stock</a>', 'wp-notify-stock-domain');
     }
 
     return $text;
@@ -25,7 +25,7 @@ add_filter('woocommerce_get_availability_text', 'change_backorder_message', 10, 
 
 function wp_notify_stock_scripts()
 {
-    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.2.1', false);
+    wp_enqueue_script('wp_notify_stock', plugin_dir_url(__FILE__) . 'js/wp-notify-stock.js', array('jquery'), '1.3.0', false);
 
     wp_localize_script('wp_notify_stock', 'ajax_object',
         array('ajax_url' => admin_url('admin-ajax.php')));

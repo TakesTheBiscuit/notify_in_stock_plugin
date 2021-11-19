@@ -19,7 +19,14 @@ jQuery(window).on('found_variation',
 );
 
 function init_wp_notify_stock(evSource) {
+    // dom bindings and ev handlers 
+
     console.log('init_wp_notify_stock running, source, ', evSource);
+
+    // show the button
+    jQuery('#wp-notify-me').fadeIn('fast');
+
+
     jQuery('#wp-notify-me').on('click', function () {
         if (jQuery('#wp-notify-stock').length) {
 
@@ -62,6 +69,11 @@ function show_wp_notify_stock(productID, domElAppendTo) {
 
             jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-close" onclick="wpStockNotifyClose()">Close</button>');
             jQuery('#wp-notify-stock').append('<button id="wp-notify-stock-add-cart" onclick="triggerAddToCart()">Back order</button><div class="wp-notify-stock-clear-floats"></div>');
+
+            // hide the button
+            jQuery('#wp-notify-me').fadeOut('fast', function(){
+                jQuery('#wp-notify-complete').fadeIn('fast');
+            });
 
         });
     });
