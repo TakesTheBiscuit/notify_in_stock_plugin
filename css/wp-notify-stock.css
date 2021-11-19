@@ -1,19 +1,19 @@
 #wp-notify-stock {
     background:white;
-    height: 350px;
-    width: 320px;
+    height: 350px!important;
+    width: 320px!important;
     border:3px solid #000;
     color: #000;
     font-family:sans-serif;
     font-size: 1rem;
    
     z-index:999;
-    padding:20px;
+    padding:20px!important;
 
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 50%!important;
+    left: 50%!important;
+    transform: translate(-50%, -50%)!important;
 }
 #wp-notify-complete {
     display:none;

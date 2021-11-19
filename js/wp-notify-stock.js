@@ -32,7 +32,7 @@ function init_wp_notify_stock(evSource) {
 
         } else {
             var pID = jQuery(this).attr('data-product-id');
-            show_wp_notify_stock(pID, jQuery(this).parent().parent());
+            show_wp_notify_stock(pID, jQuery(this).parent());
         }
     });
 }
