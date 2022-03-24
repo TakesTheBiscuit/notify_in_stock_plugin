@@ -3,7 +3,7 @@
 Plugin Name: WP Notify Stock
 Plugin URI:  http://pauldrage.co.uk
 Description: This plugin allows woocommerce customers to request to be notified when a product is back in stock
-Version:     1.3.2
+Version:     2.0.0
 Author:      Paul Drage
 Author URI:  http://pauldrage.co.uk
 License:     GPL2 etc
@@ -37,6 +37,11 @@ add_action('wp_enqueue_scripts', 'wp_notify_stock_scripts');
 
 add_action('wp_ajax_wp_notify_stock_alert', 'wp_notify_stock_alert');
 add_action( 'wp_ajax_nopriv_wp_notify_stock_alert', 'wp_notify_stock_alert' );
+
+
+add_action( 'woocommerce_new_product', 'mp_sync_on_product_save', 10, 1 );
+add_action( 'woocommerce_update_product', 'mp_sync_on_product_save', 10, 1 );
+
 
 function wp_notify_stock_alert()
 {
@@ -78,6 +83,30 @@ function email_site_owner($notification_body) {
     wp_mail($to_addr, $subject, $notification_body);
 
     return true;
+}
+
+
+function mp_sync_on_product_save($product_id)
+{
+    $product = wc_get_product( $product_id );
+
+    // we need to know if we have > 0 in inventory
+    if ($product->get_stock_quantity())
+    {
+        if ($product->get_stock_quantity() > 0) {
+            cycle_all_back_order_notify_requests($product);
+        }
+    }
+
+}
+
+function cycle_all_back_order_notify_requests($product) {
+    // for all of them - if we match the sku drop them an email! :) 
+
+    // the product is an object
+    echo $product->get_name(). ' has '.$product->get_stock_quantity();
+    exit;
+
 }
 
 
