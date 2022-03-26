@@ -2,7 +2,7 @@
 /*
 Plugin Name: WP Notify Stock
 Plugin URI:  http://pauldrage.co.uk
-Description: This plugin allows woocommerce customers to request to be notified when a product is back in stock
+Description: This plugin allows woocommerce customers to request to be notified when a product is back in stock. Sends emails.
 Version:     2.0.0
 Author:      Paul Drage
 Author URI:  http://pauldrage.co.uk
@@ -42,6 +42,19 @@ add_action( 'wp_ajax_nopriv_wp_notify_stock_alert', 'wp_notify_stock_alert' );
 add_action( 'woocommerce_new_product', 'mp_sync_on_product_save', 10, 1 );
 add_action( 'woocommerce_update_product', 'mp_sync_on_product_save', 10, 1 );
 
+
+add_action('init', 'wp_notify_stock_cpt');
+
+add_filter( 'wp_mail_from', 'custom_wp_mail_from' );
+function custom_wp_mail_from( $original_email_address ) {
+    //Make sure the email is from the same domain 
+    //as your website to avoid being marked as spam.
+    return 'sales@abikething.com';
+}
+add_filter( 'wp_mail_from_name', 'custom_wp_mail_from_name' );
+function custom_wp_mail_from_name( $original_email_from ) {
+    return 'A Bike Thing';
+}
 
 function wp_notify_stock_alert()
 {
@@ -88,29 +101,143 @@ function email_site_owner($notification_body) {
 
 function mp_sync_on_product_save($product_id)
 {
+
     $product = wc_get_product( $product_id );
 
     // we need to know if we have > 0 in inventory
     if ($product->get_stock_quantity())
     {
         if ($product->get_stock_quantity() > 0) {
-            cycle_all_back_order_notify_requests($product);
+            cycle_all_back_order_notify_requests($product_id, $product);
         }
     }
 
 }
 
-function cycle_all_back_order_notify_requests($product) {
+function cycle_all_back_order_notify_requests($pID, $product) {
     // for all of them - if we match the sku drop them an email! :) 
 
     // the product is an object
-    echo $product->get_name(). ' has '.$product->get_stock_quantity();
-    exit;
+    // echo $pID. ' '. $product->get_name(). ' has '.$product->get_stock_quantity();
+
+    get_all_notify_requests($pID, $product->get_name(), $product->get_stock_quantity());
+
+
+}
+
+function get_all_notify_requests($pID, $product_name, $product_stock_quantity)
+{
+
+    $query_params = array(
+        'numberposts'      => 5000,
+        'post_type'        => 'wp-notify-stock',
+        'post_status'=>'private',
+        'posts_per_page' => -1
+    );
+
+    $posts = get_posts($query_params);
+
+    foreach ($posts as $post) {
+        $content = $post->post_content;
+
+        $should_email = should_send_email_check($content, $pID);
+        if ($should_email) {
+            // send an email now to
+            $did_send = email_user_info($should_email, $product_name, $product_stock_quantity);
+            if ($did_send) {
+                // delete this post so we don't spam the user again in future
+                wp_delete_post($post->ID);
+            }
+        }
+    }
+    
+}
+
+function email_user_info($email_address, $product_name, $product_stock_quantity) {
+    $instock_subject = 'Item is back in stock. '.$product_name;
+    $notification_body = "Hi there, You asked us to email you when this item came back in stock.";
+    $notification_body .= "\nWe currently have ".$product_stock_quantity." in stock ready to go";
+    $notification_body .= "\n\nView product here: https://www.abikething.com/?s=". urlencode($product_name)."&post_type=product";
+    $notification_body .= "\n\nAny questions please drop us a line, thanks.";
+
+    $did_send = wp_mail($email_address, $instock_subject, $notification_body);
+
+    return $did_send;
+}
+
+
+function getEmailFromBackOrderMessage($message) {
+    $pattern = "/email:\s*(.*)$/";
+    $lines = explode("\n", $message);
+    $target_line = $lines[3];
+    
+    $did_find = preg_match($pattern, $target_line, $matches); 
+    
+    if ($did_find && count($matches) > 0) {
+        return trim($matches[1]);
+    }
+    
+    // fall through
+    return false;
+}
+
+function getSKUFromBackOrderMessage($message) {
+    $pattern = "/SKU:\s*(.*)$/";
+    $lines = explode("\n", $message);
+    $target_line = $lines[5];
+    
+    $did_find = preg_match($pattern, $target_line, $matches); 
+    
+    if ($did_find && count($matches) > 0) {
+        return trim($matches[1]);
+    }
+    
+    // fall through
+    return false;
+}
+
+function getProductIDFromBackOrderMessage($message) {
+    $pattern = "/post=\s*(.*)(?=&)/";
+    $lines = explode("\n", $message);
+    $target_line = $lines[4];
+    
+    $did_find = preg_match($pattern, $target_line, $matches); 
+    
+    if ($did_find && count($matches) > 0) {
+        return trim($matches[1]);
+    }
+    
+    // fall through
+    return false;
+}
+
+
+function should_send_email_check($str, $pID) {
+  
+    $emailFound = getEmailFromBackOrderMessage($str);
+
+    if ($emailFound) {
+        
+        // get sku - not all items have skus
+        $skuFound = getSKUFromBackOrderMessage($str);
+        $productID = getProductIDFromBackOrderMessage($str);
+
+        if ($productID && is_numeric($productID)) {
+
+            // now we check if the request matches the item that just got edited
+            if ($productID == $pID) {
+                return $emailFound;
+            }            
+        }
+    }
+
+    // fall through
+    return false;
+
 
 }
 
 
-wp_notify_stock_cpt();
 
 function wp_notify_stock_cpt()
 {
@@ -183,3 +310,6 @@ function woocom_admins_only()
     }
 
 }
+
+
+
